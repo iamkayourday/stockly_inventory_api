@@ -1,3 +1,56 @@
+import shortuuid
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
-# Create your models here.
+
+class CustomUser(AbstractUser):
+    id = models.CharField(
+        primary_key=True,
+        max_length=22,
+        default=shortuuid.uuid,
+        editable=False,
+        unique=True,
+        db_index=True  # For faster queries (nice for APIs)
+    )
+
+    email = models.EmailField(unique=True)
+    phone_number = PhoneNumberField(unique=True, blank=True, null=True)  
+    middle_name = models.CharField(max_length=30, blank=True) 
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']  
+
+    def __str__(self):
+        return self.username
+
+    def get_full_name(self):
+        middle = f" {self.middle_name}" if self.middle_name else ""
+        return f"{self.first_name}{middle} {self.last_name}".strip()
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+
+    # Text fields → only blank=True
+    company_name = models.CharField(max_length=200, blank=True)
+    address = models.TextField(blank=True)
+    website = models.URLField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postal_code = models.CharField(max_length=20, blank=True)
+    tax_id = models.CharField(max_length=100, blank=True)
+    business_type = models.CharField(max_length=100, blank=True)
+    about = models.TextField(blank=True)
+
+    # Fields that are NOT text → use both blank=True, null=True
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    date_of_establishment = models.DateField(blank=True, null=True)
+
+    # System fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.get_full_name() or self.user.email}'s Profile"
