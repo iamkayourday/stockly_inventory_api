@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Profile
+from .models import CustomUser, Profile, Category
 from django.contrib.auth.password_validation import validate_password
 
 # 1. User Registration Serializer
@@ -73,3 +73,10 @@ class PasswordChangeSerializer(serializers.Serializer):
             )
 
         return attrs
+
+# 5. Category Serializer
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        read_only_fields = ('id', 'created_at', 'updated_at')
