@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
-
+# Custom user model
 class CustomUser(AbstractUser):
     id = models.CharField(
         primary_key=True,
@@ -29,6 +29,7 @@ class CustomUser(AbstractUser):
         return f"{self.first_name}{middle} {self.last_name}".strip()
 
 
+# Profile model linked to CustomUser
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
 
@@ -54,3 +55,15 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.email}'s Profile"
+
+
+# Category model
+class Category(models.Model):
+    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    name = models.CharField(max_length=150, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
