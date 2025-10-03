@@ -1,0 +1,55 @@
+# 1. List all users - needs admin token
+GET http://localhost:8000/api/v1/users HTTP/1.1
+Authorization: Bearer 
+
+
+#2. REGISTER USER
+###
+POST http://localhost:8000/api/v1/register
+Content-Type: application/json
+
+{
+  "username": "test2basit",
+  "email": "test2@example.com",
+  "password": "test1234.",
+  "confirm_password": "test1234.",
+  "first_name": "Abdul",
+  "last_name": "Basit",
+  "middle_name": "O.",
+  "phone": "+2348012345678",
+  "company_name": "Stockly Ltd",
+  "address": "Ibadan, Nigeria"
+}
+
+
+### 
+#3. Login user/get token
+POST http://localhost:8000/api/v1/login/
+Content-Type: application/json
+
+{
+  "email": "test@gmail.com",
+  "password": "test1234."
+}
+
+###
+#4. Refresh Token
+POST http://localhost:8000/token/refresh/
+Content-Type: application/json
+
+{
+  "refresh": 
+}
+
+
+###
+#5. Change Password
+PUT http://localhost:8000/api/v1/change-password/ 
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+    "old_password" : "Texas2025.",
+    "new_password" : "Texas2025.",
+    "confirm_new_password" : "Texas2025."
+}
