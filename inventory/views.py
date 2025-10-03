@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import status, permissions
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
-from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer
-from .models import CustomUser
+from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer
+from .models import CustomUser, Category
 
 # Create your views here.
 # This view handles user registration
@@ -48,3 +49,31 @@ class PasswordChangeView(UpdateAPIView):
         
         return Response({"message": "Password updated successfully."})
 
+
+# Category views will go here to Add, List, Update, Retrieve, Delete Categories
+class CategoryListView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name', 'created_at', 'updated_at']
+
+class CategoryCreateView(CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
+
+class CategoryDetailView(RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class CategoryUpdateView(UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
+
+class CategoryDeleteView(DestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
