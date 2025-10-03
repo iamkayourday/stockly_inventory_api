@@ -49,3 +49,27 @@ class UserListSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'middle_name', 'phone_number', 'is_staff', 'is_active', 'date_joined', 'profile')
 
+# 4. Password Change Serializer
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(
+        required=True, 
+        validators=[validate_password]
+    )
+    confirm_new_password = serializers.CharField(required=True)
+    
+    def validate(self, attrs):
+        # Check password match
+        if attrs['new_password'] != attrs['confirm_new_password']:
+            raise serializers.ValidationError(
+                {"confirm_new_password": "New password fields didn't match."}
+            )
+        
+        # Check old password validity
+        user = self.context['request'].user
+        if not user.check_password(attrs['old_password']):
+            raise serializers.ValidationError(
+                {"old_password": "Old password is not correct."}
+            )
+
+        return attrs
