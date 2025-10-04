@@ -84,6 +84,7 @@ class CategorySerializer(serializers.ModelSerializer):
 # 6. Inventory Item Serializer
 class InventoryItemSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = InventoryItem
