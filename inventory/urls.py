@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserRegistrationView, UserListView, PasswordChangeView,  CategoryListView,CategoryCreateView,CategoryDetailView,CategoryUpdateView,CategoryDeleteView, InventoryItemListView
+from .views import UserInventoryListView, UserRegistrationView, UserListView, PasswordChangeView,  CategoryListView,CategoryCreateView,CategoryDetailView,CategoryUpdateView,CategoryDeleteView, InventoryItemListView, InventoryCreateView, InventoryDetailView, InventoryUpdateView, InventoryDeleteView
 
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
@@ -15,5 +15,11 @@ urlpatterns = [
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category_detail'),
     path('categories/<int:pk>/update/', CategoryUpdateView.as_view(), name='category_update'),
     path('categories/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
-    path('inventory-items/', InventoryItemListView.as_view(), name='inventory_item_list'),
+    path('inventory/', InventoryItemListView.as_view(), name='inventory_item_list'),
+    path('inventory/create/', InventoryCreateView.as_view(), name='inventory_item_create'),
+    path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='inventory_item_detail'),
+    path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_item_update'),
+    path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_item_delete'),
+    path('inventory/user/', UserInventoryListView.as_view(), name='user_inventory_list'),
+
 ]
