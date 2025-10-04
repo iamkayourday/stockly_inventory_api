@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserInventoryListView, UserRegistrationView, UserListView, PasswordChangeView,  CategoryListView,CategoryCreateView,CategoryDetailView,CategoryUpdateView,CategoryDeleteView, InventoryItemListView, InventoryCreateView, InventoryDetailView, InventoryUpdateView, InventoryDeleteView
+from .views import UserInventoryListView, UserRegistrationView, UserListView, PasswordChangeView,  CategoryListView,CategoryCreateView,CategoryDetailView,CategoryUpdateView,CategoryDeleteView, InventoryItemListView, InventoryCreateView, InventoryDetailView, InventoryUpdateView, InventoryDeleteView, InventoryChangeListCreateView, InventoryChangeDetailView
 
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
@@ -28,5 +28,7 @@ urlpatterns = [
     path('inventory/user/', UserInventoryListView.as_view(), name='user_inventory_list'),
 
     # INVENTORY CHANGE
+     path('inventory-changes/', InventoryChangeListCreateView.as_view(), name='inventory_changes_list'),
+    path('inventory-changes/<str:pk>/', InventoryChangeDetailView.as_view(), name='inventory_change_detail'),
 
 ]
