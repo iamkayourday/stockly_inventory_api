@@ -66,6 +66,7 @@ class Category(models.Model):
 class InventoryItem(models.Model):
     id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_items')
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='items')
     quantity = models.PositiveIntegerField(default=0)
