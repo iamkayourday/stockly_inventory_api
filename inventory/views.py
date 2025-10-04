@@ -1,11 +1,11 @@
-from django.shortcuts import render
+from django.contrib.auth import update_session_auth_hash
 from rest_framework import status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
-from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer, InventoryItemSerializer
-from .models import CustomUser, Category, InventoryItem
+from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer, InventoryItemSerializer, InventoryChangeSerializer
+from .models import CustomUser, Category, InventoryItem,InventoryChange
 
 # Create your views here.
 # This view handles user registration
@@ -64,7 +64,7 @@ class CategoryListView(ListAPIView):
 class CategoryCreateView(CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 # Retrieve Category
 class CategoryDetailView(RetrieveAPIView):
@@ -76,13 +76,13 @@ class CategoryDetailView(RetrieveAPIView):
 class CategoryUpdateView(UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 # Delete Category
 class CategoryDeleteView(DestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 # Inventory Item views will go here to Add, List, Update, Retrieve, Delete Inventory Items
 
@@ -137,5 +137,4 @@ class UserInventoryListView(ListAPIView):
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
 
-
-    
+# Inventory Change views will go here to Add, List, Update, Retrieve, Delete Inventory Changes
