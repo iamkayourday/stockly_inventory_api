@@ -66,7 +66,7 @@ class Category(models.Model):
 class InventoryItem(models.Model):
     id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_items')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_items', null=True)
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='items')
     quantity = models.PositiveIntegerField(default=0)
@@ -91,3 +91,47 @@ class InventoryItem(models.Model):
     @property
     def total_value(self):
         return self.quantity * self.price
+    
+
+#  Inventory Change Model
+class InventoryChange(models.Model):
+    CHANGE_TYPE = [
+        ('RESTOCK', 'Restock'),
+        ('SALE', 'Sale'),
+        ('RETURN', 'Return'),
+        ('DAMAGE', 'Damage'),
+    ]
+    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE, related_name='changes')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_changes', null=True)
+    change_type = models.CharField(max_length=20, choices=CHANGE_TYPE)
+    quantity_change = models.IntegerField()  
+    previous_quantity = models.PositiveIntegerField(null=True, blank=True, default=0)  
+    new_quantity = models.PositiveIntegerField(null=True, blank=True, default=0)
+    reason = models.TextField(blank=True)
+    change_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.change_type} - {self.item.name} ({self.quantity_change})"
+    
+    def save(self, *args, **kwargs):
+        if self.item:
+            self.previous_quantity = self.item.quantity
+            
+            # ✅ Determine if we should add or subtract based on change_type
+            if self.change_type in ['SALE', 'DAMAGE']:
+                # REDUCE inventory (subtract)
+                self.new_quantity = self.previous_quantity - self.quantity_change
+            else:  # RESTOCK, RETURN
+                # ADD to inventory (add)
+                self.new_quantity = self.previous_quantity + self.quantity_change
+            
+            # Update the inventory item
+            self.item.quantity = self.new_quantity
+            self.item.save()
+        
+        super().save(*args, **kwargs)
+    
+    class Meta:
+        ordering = ['-change_date']
+
