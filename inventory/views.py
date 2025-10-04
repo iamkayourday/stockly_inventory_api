@@ -90,7 +90,7 @@ class CategoryDeleteView(DestroyAPIView):
 class InventoryItemListView(ListAPIView):
     queryset = InventoryItem.objects.all()
     serializer_class = InventoryItemSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'category', 'price', 'quantity', 'created_at', 'updated_at']
     search_fields = ['name', 'description', 'category__name']
@@ -105,6 +105,28 @@ class InventoryCreateView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+class InventoryDetailView(RetrieveAPIView):
+    queryset = InventoryItem.objects.all()
+    serializer_class = InventoryItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class InventoryUpdateView(UpdateAPIView):
+    queryset = InventoryItem.objects.all()
+    serializer_class = InventoryItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return InventoryItem.objects.filter(user=self.request.user)
+
+class InventoryDeleteView(DestroyAPIView):
+    queryset = InventoryItem.objects.all()
+    serializer_class = InventoryItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return InventoryItem.objects.filter(user=self.request.user)
+    
+# User Inventory List View
 class UserInventoryListView(ListAPIView):
     serializer_class = InventoryItemSerializer
     permission_classes = [IsAuthenticated]
