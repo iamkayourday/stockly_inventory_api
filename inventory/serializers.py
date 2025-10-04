@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Profile, Category
+from .models import CustomUser, Profile, Category, InventoryItem
 from django.contrib.auth.password_validation import validate_password
 
 # 1. User Registration Serializer
@@ -80,3 +80,36 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+# 6. Inventory Item Serializer
+class InventoryItemSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+
+    class Meta:
+        model = InventoryItem
+        fields = '__all__'
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+    def validate_name(self, value):
+        if not value:
+            raise serializers.ValidationError("Name cannot be empty.")
+        elif len(value) < 3:
+            raise serializers.ValidationError("Name must be at least 3 characters long.")
+        return value
+    def validate_quantity(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Quantity cannot be negative.")
+        return value
+    def validate_price(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Price cannot be negative.")
+        return value
+    def validate_low_stock_threshold(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Low stock threshold cannot be negative.")
+        return value
+    def validate(self, attrs):
+        if 'quantity' in attrs and 'low_stock_threshold' in attrs:
+            if attrs['quantity'] < attrs['low_stock_threshold']:
+                raise serializers.ValidationError("Quantity cannot be less than low stock threshold.")
+        return attrs
