@@ -3,7 +3,7 @@ from rest_framework import status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView, ListCreateAPIView
 from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer, InventoryItemSerializer, InventoryChangeSerializer
 from .models import CustomUser, Category, InventoryItem,InventoryChange
 
@@ -114,6 +114,7 @@ class InventoryUpdateView(UpdateAPIView):
     queryset = InventoryItem.objects.all()
     serializer_class = InventoryItemSerializer
     permission_classes = [IsAuthenticated]
+    read_only_fields = ['quantity']
 
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
@@ -138,3 +139,21 @@ class UserInventoryListView(ListAPIView):
         return InventoryItem.objects.filter(user=self.request.user)
 
 # Inventory Change views will go here to Add, List, Update, Retrieve, Delete Inventory Changes
+class InventoryChangeListCreateView(ListCreateAPIView):
+    serializer_class = InventoryChangeSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # Users only see changes for their own items
+        return InventoryChange.objects.filter(item__user=self.request.user).select_related('item', 'user')
+    
+    def perform_create(self, serializer):
+        # User is auto-set, quantities auto-calculated in model save()
+        serializer.save(user=self.request.user)
+    
+class InventoryChangeDetailView(RetrieveAPIView):
+    serializer_class = InventoryChangeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return InventoryChange.objects.filter(item__user=self.request.user)
