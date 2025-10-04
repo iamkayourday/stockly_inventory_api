@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Profile, Category, InventoryItem
+from .models import CustomUser, Profile, Category, InventoryItem, InventoryChange
 from django.contrib.auth.password_validation import validate_password
 
 # 1. User Registration Serializer
@@ -85,11 +85,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class InventoryItemSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     user = serializers.ReadOnlyField(source='user.username')
+    is_low_stock = serializers.ReadOnlyField()
+    total_value = serializers.ReadOnlyField()
 
     class Meta:
         model = InventoryItem
         fields = '__all__'
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at', 'quantity', 'is_low_stock', 'total_value')
 
     def validate_name(self, value):
         if not value:
@@ -113,4 +115,47 @@ class InventoryItemSerializer(serializers.ModelSerializer):
         if 'quantity' in attrs and 'low_stock_threshold' in attrs:
             if attrs['quantity'] < attrs['low_stock_threshold']:
                 raise serializers.ValidationError("Quantity cannot be less than low stock threshold.")
+        return attrs
+    
+
+# 7. Inventory Change Serializer
+class InventoryChangeSerializer(serializers.ModelSerializer):
+    item_name = serializers.ReadOnlyField(source='item.name')
+    user_name = serializers.ReadOnlyField(source='user.username')
+    
+    class Meta:
+        model = InventoryChange
+        fields = '__all__'
+        read_only_fields = ('id', 'change_date', 'previous_quantity', 'new_quantity', 'user')
+
+    def validate_quantity_change(self, value):
+        if value == 0:
+            raise serializers.ValidationError("Quantity change cannot be zero.")
+        return value
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        item = attrs.get('item')
+        change_type = attrs.get('change_type')
+        quantity_change = attrs.get('quantity_change')
+        
+        # Validate change type logic
+        if change_type in ['SALE', 'DAMAGE'] and quantity_change > 0:
+            raise serializers.ValidationError(
+                {"quantity_change": f"{change_type} must have negative quantity change."}
+            )
+        
+        if change_type in ['RESTOCK', 'RETURN'] and quantity_change < 0:
+            raise serializers.ValidationError(
+                {"quantity_change": f"{change_type} must have positive quantity change."}
+            )
+        
+        # Prevent negative stock
+        if item and quantity_change < 0:
+            current_stock = item.quantity
+            if current_stock + quantity_change < 0:
+                raise serializers.ValidationError(
+                    {"quantity_change": f"Cannot reduce stock below zero. Current: {current_stock}, Attempted: {quantity_change}"}
+                )
+        
         return attrs
