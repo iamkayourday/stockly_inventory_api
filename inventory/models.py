@@ -135,4 +135,4 @@ class InventoryChange(models.Model):
     
     class Meta:
         ordering = ['-change_date']
-
+        
