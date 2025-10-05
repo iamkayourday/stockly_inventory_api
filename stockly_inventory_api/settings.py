@@ -52,6 +52,7 @@ INSTALLED_APPS = [
      'corsheaders',
      'phonenumber_field',
      'django_filters',
+     'drf_spectacular',
 
 ]
 
@@ -116,6 +117,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 # Password validation
@@ -159,3 +163,102 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'inventory.CustomUser'
+
+
+
+# DRF Spectacular Settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Stockly API',
+    'DESCRIPTION': '''
+    # Stockly - Inventory Management API
+    
+    A comprehensive REST API for managing inventory, tracking stock levels, and monitoring inventory changes.
+    
+    ## Features
+    - 🔐 JWT Authentication
+    - 📦 Inventory Item Management (CRUD)
+    - 👥 User Management & Profiles  
+    - 📊 Inventory Change Tracking
+    - 🏷️ Category Management
+    - 🔔 Low Stock Alerts
+    - 📈 Reporting & Analytics
+    
+    ## Authentication
+    This API uses JWT tokens for authentication. 
+    1. Register a user at `/api/auth/register/`
+    2. Login at `/api/auth/login/` to get your tokens
+    3. Use the access token in Authorization header: `Bearer <your_token>`
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    
+    # API Configuration
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    
+    # Swagger UI Settings
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
+    },
+    
+    # Schema Generation Settings
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_COERCE_PATH_PK': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    
+    # Authentication
+    'SECURITY': [
+        {
+            'Bearer': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    ],
+    # 'TAGS': [
+    #     {
+    #         'name': 'authentication',
+    #         'description': 'User registration, login, and token management'
+    #     },
+    #     {
+    #         'name': 'users', 
+    #         'description': 'User management endpoints (admin only)'
+    #     },
+    #     {
+    #         'name': 'inventory',
+    #         'description': 'Inventory item management and tracking'
+    #     },
+    #     {
+    #         'name': 'categories',
+    #         'description': 'Product category management'
+    #     },
+    #     {
+    #         'name': 'inventory-changes',
+    #         'description': 'Track inventory stock movements and history'
+    #     },
+    # ],
+    
+    # Customize Operation IDs
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'Bearer': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    },
+    
+    # Preprocessing hooks
+    'PREPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.preprocess_exclude_path_format',
+    ],
+    
+    # Postprocessing hooks  
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+    ],
+}
