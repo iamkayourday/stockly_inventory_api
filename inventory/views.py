@@ -1,13 +1,20 @@
 from django.contrib.auth import update_session_auth_hash
-from rest_framework import status, permissions
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser,IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView, ListCreateAPIView
-from rest_framework.pagination import PageNumberPagination
-from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer, InventoryItemSerializer, InventoryChangeSerializer
-from .models import CustomUser, Category, InventoryItem,InventoryChange
 from django.db.models import F
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, status
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, ListCreateAPIView,
+                                     RetrieveAPIView, UpdateAPIView)
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+
+from .models import Category, CustomUser, InventoryChange, InventoryItem
+from .serializers import (CategorySerializer, InventoryChangeSerializer,
+                          InventoryItemSerializer, PasswordChangeSerializer,
+                          UserListSerializer, UserRegistrationSerializer)
+
 
 # Create your views here.
 # This view handles user registration

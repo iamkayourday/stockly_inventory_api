@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Profile, Category, InventoryItem, InventoryChange
+
+from .models import (Category, CustomUser, InventoryChange, InventoryItem,
+                     Profile)
+
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser

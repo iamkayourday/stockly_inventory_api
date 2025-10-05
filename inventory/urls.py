@@ -1,8 +1,14 @@
 from django.urls import path
-from .views import UserInventoryListView, UserRegistrationView, UserListView, PasswordChangeView,  CategoryListView,CategoryCreateView,CategoryDetailView,CategoryUpdateView,CategoryDeleteView, InventoryItemListView, InventoryCreateView, InventoryDetailView, InventoryUpdateView, InventoryDeleteView, InventoryChangeListCreateView, InventoryChangeDetailView
-
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
+
+from .views import (CategoryCreateView, CategoryDeleteView, CategoryDetailView,
+                    CategoryListView, CategoryUpdateView,
+                    InventoryChangeDetailView, InventoryChangeListCreateView,
+                    InventoryCreateView, InventoryDeleteView,
+                    InventoryDetailView, InventoryItemListView,
+                    InventoryUpdateView, PasswordChangeView,
+                    UserInventoryListView, UserListView, UserRegistrationView)
 
 urlpatterns = [
     # AUTHENTICATION

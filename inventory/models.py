@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 # Custom user model
 class CustomUser(AbstractUser):
     id = models.CharField(

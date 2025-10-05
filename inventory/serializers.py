@@ -1,6 +1,9 @@
-from rest_framework import serializers
-from .models import CustomUser, Profile, Category, InventoryItem, InventoryChange
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+
+from .models import (Category, CustomUser, InventoryChange, InventoryItem,
+                     Profile)
+
 
 # 1. User Registration Serializer
 class UserRegistrationSerializer(serializers.ModelSerializer):
