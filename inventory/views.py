@@ -4,8 +4,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView, ListCreateAPIView
+from rest_framework.pagination import PageNumberPagination
 from .serializers import UserRegistrationSerializer, UserListSerializer, PasswordChangeSerializer, CategorySerializer, InventoryItemSerializer, InventoryChangeSerializer
 from .models import CustomUser, Category, InventoryItem,InventoryChange
+from django.db.models import F
 
 # Create your views here.
 # This view handles user registration
@@ -90,12 +92,25 @@ class CategoryDeleteView(DestroyAPIView):
 class InventoryItemListView(ListAPIView):
     queryset = InventoryItem.objects.all()
     serializer_class = InventoryItemSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'category', 'price', 'quantity', 'created_at', 'updated_at']
     search_fields = ['name', 'description', 'category__name']
     ordering_fields = ['name', 'price', 'quantity', 'created_at', 'updated_at']
     ordering = ['-updated_at']
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Low stock filter
+        low_stock = self.request.query_params.get('low_stock', None)
+        if low_stock is not None:
+            if low_stock.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(quantity__lte=F('low_stock_threshold'))
+        
+        return queryset
+
 
 class InventoryCreateView(CreateAPIView):
     queryset = InventoryItem.objects.all()
@@ -134,9 +149,21 @@ class UserInventoryListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'category', 'price', 'quantity', 'created_at', 'updated_at']
     search_fields = ['name', 'description', 'category__name']
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Low stock filter
+        low_stock = self.request.query_params.get('low_stock', None)
+        if low_stock is not None:
+            if low_stock.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(quantity__lte=F('low_stock_threshold'))
+        
+        return queryset
 
 # Inventory Change views will go here to Add, List, Update, Retrieve, Delete Inventory Changes
 class InventoryChangeListCreateView(ListCreateAPIView):
