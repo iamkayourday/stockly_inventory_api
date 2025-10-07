@@ -10,10 +10,10 @@ from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from .models import Category, CustomUser, InventoryChange, InventoryItem
+from .models import Category, CustomUser, InventoryChange, InventoryItem, Supplier
 from .serializers import (CategorySerializer, InventoryChangeSerializer,
                           InventoryItemSerializer, PasswordChangeSerializer,
-                          UserListSerializer, UserRegistrationSerializer)
+                          UserListSerializer, UserRegistrationSerializer, SupplierSerializer)
 
 
 # Create your views here.
@@ -102,7 +102,7 @@ class InventoryItemListView(ListAPIView):
     # permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'category', 'price', 'quantity', 'created_at', 'updated_at']
-    search_fields = ['name', 'description', 'category__name']
+    search_fields = ['name', 'description', 'category__name', 'supplier', 'barcode']
     ordering_fields = ['name', 'price', 'quantity', 'created_at', 'updated_at']
     ordering = ['-updated_at']
     pagination_class = PageNumberPagination
@@ -178,14 +178,26 @@ class InventoryChangeListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        # Users only see changes for their own items
         return InventoryChange.objects.filter(item__user=self.request.user).select_related('item', 'user')
     
     def perform_create(self, serializer):
-        # User is auto-set, quantities auto-calculated in model save()
         serializer.save(user=self.request.user)
     
 class InventoryChangeDetailView(RetrieveAPIView):
+    serializer_class = InventoryChangeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return InventoryChange.objects.filter(item__user=self.request.user)
+    
+class InventoryChangeUpdateView(UpdateAPIView):
+    serializer_class = InventoryChangeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return InventoryChange.objects.filter(item__user=self.request.user)
+    
+class InventoryChangeDeleteView(DestroyAPIView):
     serializer_class = InventoryChangeSerializer
     permission_classes = [IsAuthenticated]
 
