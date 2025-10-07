@@ -203,3 +203,51 @@ class InventoryChangeDeleteView(DestroyAPIView):
 
     def get_queryset(self):
         return InventoryChange.objects.filter(item__user=self.request.user)
+    
+
+# Supplier views will go here to Add, List, Update, Retrieve, Delete Suppliers
+class SupplierCreateView(CreateAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class UserSupplierListView(ListAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name', 'contact_person', 'email', 'phone_number', 'city', 'state', 'country', 'created_at', 'updated_at']
+    search_fields = ['name', 'contact_person', 'email', 'phone_number']
+    ordering_fields = ['name', 'created_at', 'updated_at']
+    ordering = ['-updated_at']
+    # pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        return Supplier.objects.filter(user=self.request.user)
+    
+class SupplierDetailView(RetrieveAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Supplier.objects.filter(user=self.request.user)
+    
+class SupplierUpdateView(UpdateAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Supplier.objects.filter(user=self.request.user)
+
+class SupplierDeleteView(DestroyAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Supplier.objects.filter(user=self.request.user)
