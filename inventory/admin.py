@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import (Category, CustomUser, InventoryChange, InventoryItem,
-                     Profile)
+                     Profile, Supplier)
 
 
 class CustomUserAdmin(UserAdmin):
@@ -38,7 +38,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class InventoryItemAdmin(admin.ModelAdmin):
     model = InventoryItem
-    list_display = ['id', 'name', 'description', 'quantity', 'price', 'category', 'low_stock_threshold', 'created_at', 'updated_at']
+    list_display = ['id', 'name', 'supplier', 'barcode', 'description', 'quantity', 'price', 'category', 'low_stock_threshold', 'created_at', 'updated_at']
     search_fields = ['name', 'category__name']
     list_filter = ['category', 'created_at', 'updated_at']
 
@@ -56,10 +56,14 @@ class InventoryChangeAdmin(admin.ModelAdmin):
         # This will trigger the custom save() method in the model
         super().save_model(request, obj, form, change)
 
-
-
+class SupplierAdmin(admin.ModelAdmin):
+    model = Supplier
+    list_display = ['id', 'name', 'contact_person', 'email', 'phone_number', 'city', 'state', 'country', 'created_at', 'updated_at']
+    search_fields = ['name', 'contact_person', 'email', 'phone_number']
+    list_filter = ['city', 'state', 'country', 'created_at']
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(InventoryItem, InventoryItemAdmin)
 admin.site.register(InventoryChange, InventoryChangeAdmin)
+admin.site.register(Supplier, SupplierAdmin)
