@@ -4,7 +4,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-# Custom user model
+# CUSTOM USER MODEL
 class CustomUser(AbstractUser):
     id = models.CharField(
         primary_key=True,
@@ -30,7 +30,7 @@ class CustomUser(AbstractUser):
         return f"{self.first_name}{middle} {self.last_name}".strip()
 
 
-# Profile model linked to CustomUser
+# PROFILE MODEL LINKED CUSTOMUSER MODEL
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
     company_name = models.CharField(max_length=200, blank=True)
@@ -52,7 +52,8 @@ class Profile(models.Model):
         return f"{self.user.get_full_name() or self.user.email}'s Profile"
 
 
-# Category model
+# STRETCH GOAL
+# CATEGORY MODEL
 class Category(models.Model):
     id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=150, unique=True)
@@ -62,8 +63,11 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
-# Inventory Item Model
+
+# STRETCH GOAL
+
+   
+# INVENTORY ITEM MODEL LINKED TO CATEGORY AND SUPPLIER MODEL
 class InventoryItem(models.Model):
     id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200)
@@ -75,6 +79,8 @@ class InventoryItem(models.Model):
     low_stock_threshold = models.PositiveIntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
 
 
     class Meta:
@@ -116,23 +122,27 @@ class InventoryChange(models.Model):
         return f"{self.change_type} - {self.item.name} ({self.quantity_change})"
     
     def save(self, *args, **kwargs):
+    # Prevent circular quantity updates
         if self.item:
-            self.previous_quantity = self.item.quantity
-            
-            # ✅ Determine if we should add or subtract based on change_type
-            if self.change_type in ['SALE', 'DAMAGE']:
-                # REDUCE inventory (subtract)
-                self.new_quantity = self.previous_quantity - self.quantity_change
-            else:  # RESTOCK, RETURN
-                # ADD to inventory (add)
-                self.new_quantity = self.previous_quantity + self.quantity_change
-            
-            # Update the inventory item
-            self.item.quantity = self.new_quantity
-            self.item.save()
-        
+            if not (self.reason == 'Initial stock entry' and self.change_type == 'RESTOCK'):
+                self.previous_quantity = self.item.quantity
+
+                if self.change_type in ['SALE', 'DAMAGE']:
+                    self.new_quantity = self.previous_quantity - self.quantity_change
+                else:  # RESTOCK or RETURN
+                    self.new_quantity = self.previous_quantity + self.quantity_change
+
+                # Update the inventory item
+                self.item.quantity = self.new_quantity
+                self.item.save()
+            else:
+                # For initial stock, just log the current state
+                self.previous_quantity = 0
+                self.new_quantity = self.item.quantity
+
         super().save(*args, **kwargs)
-    
+
+
     class Meta:
         ordering = ['-change_date']
         
