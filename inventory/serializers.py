@@ -86,7 +86,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # 6. Inventory Item Serializer
 class InventoryItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = CategorySerializer()
     user = serializers.ReadOnlyField(source='user.username')
     is_low_stock = serializers.ReadOnlyField()
     total_value = serializers.ReadOnlyField()
