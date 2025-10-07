@@ -65,7 +65,23 @@ class Category(models.Model):
         return self.name
 
 # STRETCH GOAL
+# SUPPLIER MODEL
+class Supplier(models.Model):
+    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    name = models.CharField(max_length=200, unique=True)
+    contact_person = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True, unique=True)
+    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postal_code = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
    
 # INVENTORY ITEM MODEL LINKED TO CATEGORY AND SUPPLIER MODEL
 class InventoryItem(models.Model):
@@ -80,7 +96,9 @@ class InventoryItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
+# STRETCH GOALS
+    
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, blank=True, null=True, related_name='supplied_items')
 
 
     class Meta:
