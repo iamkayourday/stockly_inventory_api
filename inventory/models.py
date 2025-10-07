@@ -97,7 +97,7 @@ class InventoryItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 # STRETCH GOALS
-    
+    barcode = models.CharField(max_length=100, unique=True, blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, blank=True, null=True, related_name='supplied_items')
 
 
