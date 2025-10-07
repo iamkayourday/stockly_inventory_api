@@ -72,6 +72,7 @@ class Category(models.Model):
 class Supplier(models.Model):
     id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200, unique=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='suppliers', null=True)
     contact_person = models.CharField(max_length=100, blank=True)
     email = models.EmailField(blank=True, unique=True)
     phone_number = PhoneNumberField(blank=True, null=True, unique=True)
