@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
 from .models import (Category, CustomUser, InventoryChange, InventoryItem,
-                     Profile)
+                     Profile, Supplier)
 
 
 # 1. User Registration Serializer
@@ -162,3 +162,16 @@ class InventoryChangeSerializer(serializers.ModelSerializer):
                 )
         
         return attrs
+    
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Supplier
+        fields = '__all__'
+
+    def validate_name(self, value):
+        if not value:
+            raise serializers.ValidationError("Name cannot be empty.")
+        elif len(value) < 3:
+            raise serializers.ValidationError("Name must be at least 3 characters long.")
+        return value
+    
