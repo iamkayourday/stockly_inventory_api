@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, ListCreateAPIView,
-                                     RetrieveAPIView, UpdateAPIView)
+                                     RetrieveAPIView, RetrieveUpdateAPIView, UpdateAPIView)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from .models import Category, CustomUser, InventoryChange, InventoryItem, Supplier
 from .serializers import (CategorySerializer, InventoryChangeSerializer,
-                          InventoryItemSerializer, PasswordChangeSerializer,
+                          InventoryItemSerializer, PasswordChangeSerializer, ProfileSerializer,
                           UserListSerializer, UserRegistrationSerializer, SupplierSerializer)
 
 
@@ -29,6 +29,20 @@ class UserListView(ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [IsAdminUser]
+
+class UserInfoView(RetrieveUpdateAPIView):
+    serializer_class = UserListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+class ProfileUpdateView(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
 
 
 class PasswordChangeView(UpdateAPIView):
