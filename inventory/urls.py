@@ -7,8 +7,8 @@ from .views import (CategoryCreateView, CategoryDeleteView, CategoryDetailView,
                     InventoryChangeDetailView, InventoryChangeListCreateView,
                     InventoryCreateView, InventoryDeleteView,
                     InventoryDetailView, InventoryItemListView,
-                    InventoryUpdateView, PasswordChangeView,
-                    UserInventoryListView, UserListView, UserRegistrationView)
+                    InventoryUpdateView, PasswordChangeView, ProfileUpdateView,
+                    UserInventoryListView, UserListView, UserInfoView, UserRegistrationView)
 
 urlpatterns = [
     # AUTHENTICATION
@@ -17,6 +17,9 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('change-password/', PasswordChangeView.as_view(), name='change_password'),
     path('users/', UserListView.as_view(), name='user_list'),
+    path('profile/', UserInfoView.as_view(), name='profile'),
+    path('profile/update/', ProfileUpdateView.as_view(), name='profile-update'),
+
 
     # CATEGORIES
     path('categories/', CategoryListView.as_view(), name='category_list'),
