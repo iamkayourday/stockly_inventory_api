@@ -117,9 +117,14 @@ class InventoryItem(models.Model):
         return self.quantity <= self.low_stock_threshold
     
     # Property to calculate total value of the inventory item
+    # @property
+    # def total_value(self):
+    #     return self.quantity * self.price
     @property
     def total_value(self):
-        return self.quantity * self.price
+        if self.price is not None and self.quantity is not None:
+            return self.quantity * self.price
+        return 0 
     
 
 #  Inventory Change Model
