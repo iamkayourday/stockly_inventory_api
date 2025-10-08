@@ -36,6 +36,11 @@ class Profile(models.Model):
     company_name = models.CharField(max_length=200, blank=True)
     address = models.TextField(blank=True)
     website = models.URLField(blank=True)
+    whatsapp = models.URLField(blank=True)
+    facebook = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
+    twitter = models.URLField(blank=True)
+    tik_tok = models.URLField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
@@ -116,10 +121,10 @@ class InventoryItem(models.Model):
     def is_low_stock(self):
         return self.quantity <= self.low_stock_threshold
     
-    # Property to calculate total value of the inventory item
-    # @property
-    # def total_value(self):
-    #     return self.quantity * self.price
+    @property
+    def total_products(self):
+        return self.inventory_items.count()
+
     @property
     def total_value(self):
         if self.price is not None and self.quantity is not None:
