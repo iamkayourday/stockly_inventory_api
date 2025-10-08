@@ -39,7 +39,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class InventoryItemAdmin(admin.ModelAdmin):
     model = InventoryItem
     list_display = ['id', 'name', 'supplier', 'barcode', 'description', 'quantity', 'price', 'category', 'low_stock_threshold', 'created_at', 'updated_at']
-    readonly_fields = ('quantity', 'created_at', 'updated_at', 'total_value', 'is_low_stock')
+    # readonly_fields = ('quantity', 'created_at', 'updated_at', 'total_value', 'is_low_stock')
     search_fields = ['name', 'category__name']
     list_filter = ['category', 'created_at', 'updated_at']
 
