@@ -2,16 +2,18 @@ import shortuuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+def generate_shortuuid():
+    return shortuuid.uuid()
 
 # CUSTOM USER MODEL
 class CustomUser(AbstractUser):
     id = models.CharField(
         primary_key=True,
         max_length=22,
-        default=shortuuid.uuid,
+        default=generate_shortuuid,
         editable=False,
         unique=True,
-        db_index=True  # For faster queries (nice for APIs)
+        db_index=True
     )
 
     email = models.EmailField(unique=True)
@@ -31,15 +33,15 @@ class CustomUser(AbstractUser):
 # PROFILE MODEL LINKED CUSTOMUSER MODEL
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     company_name = models.CharField(max_length=200, blank=True)
     address = models.TextField(blank=True)
+    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)  
     website = models.URLField(blank=True)
-    whatsapp = models.CharField(max_length=100, blank=True)
-    facebook_username = models.CharField(max_length=100, blank=True)
-    instagram_username = models.CharField(max_length=100, blank=True)
-    twitter_username = models.CharField(max_length=100, blank=True)
-    tiktok_username = models.CharField(max_length=100, blank=True)
+    whatsapp = models.URLField(blank=True)
+    facebook = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
+    twitter = models.URLField(blank=True)
+    tik_tok = models.URLField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
@@ -59,7 +61,7 @@ class Profile(models.Model):
 # STRETCH GOAL
 # CATEGORY MODEL
 class Category(models.Model):
-    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=150, unique=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -74,12 +76,12 @@ class Category(models.Model):
 # STRETCH GOAL
 # SUPPLIER MODEL
 class Supplier(models.Model):
-    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200, unique=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='suppliers', null=True)
     contact_person = models.CharField(max_length=100, blank=True)
     email = models.EmailField(blank=True, unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
+    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)  
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
@@ -93,7 +95,7 @@ class Supplier(models.Model):
    
 # INVENTORY ITEM MODEL LINKED TO CATEGORY AND SUPPLIER MODEL
 class InventoryItem(models.Model):
-    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
     name = models.CharField(max_length=200)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_items', null=True)
     description = models.TextField(blank=True)
@@ -139,7 +141,7 @@ class InventoryChange(models.Model):
         ('RETURN', 'Return'),
         ('DAMAGE', 'Damage'),
     ]
-    id = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False, unique=True)
+    id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
     item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE, related_name='changes')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='inventory_changes', null=True)
     change_type = models.CharField(max_length=20, choices=CHANGE_TYPE)

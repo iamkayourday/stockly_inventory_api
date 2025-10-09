@@ -29,7 +29,7 @@ class CustomUserAdmin(UserAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
-    list_display = ['user', 'phone_number', 'company_name', 'address', 'website', 'city', 'state', 'country', 'postal_code',  'tax_id', 'business_type','about','logo', 'date_of_establishment', 'created_at', 'updated_at']
+    list_display = ['user','company_name', 'address', 'website', 'city', 'state', 'country', 'postal_code',  'tax_id', 'business_type','about','logo', 'date_of_establishment', 'created_at', 'updated_at']
     search_fields = ['user', 'company_name', 'state']
 
 class CategoryAdmin(admin.ModelAdmin):
