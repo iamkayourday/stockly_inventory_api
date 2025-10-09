@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import CustomUser, Profile, InventoryItem, InventoryChange
+from .models import CustomUser, Notification, Profile, InventoryItem, InventoryChange
 
 
 # Signal to create or update user profile when a User instance is created or updated
