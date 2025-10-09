@@ -35,7 +35,7 @@ class Profile(models.Model):
     company_name = models.CharField(max_length=200, blank=True)
     address = models.TextField(blank=True)
     website = models.URLField(blank=True)
-    whatsapp = models.URLField(blank=True)
+    whatsapp = models.CharField(max_length=100, blank=True)
     facebook_username = models.CharField(max_length=100, blank=True)
     instagram_username = models.CharField(max_length=100, blank=True)
     twitter_username = models.CharField(max_length=100, blank=True)
