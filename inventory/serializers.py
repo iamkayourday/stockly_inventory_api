@@ -48,9 +48,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 # 3. Only Admin users should see all fields
 class UserListSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
+    phone_number = serializers.CharField(source='profile.phone_number', read_only=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'middle_name', 'phone_number', 'is_staff', 'is_active', 'date_joined', 'profile')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'middle_name', 'is_staff', 'is_active', 'date_joined', 'profile', 'phone_number')
 
 # 4. Password Change Serializer
 class PasswordChangeSerializer(serializers.Serializer):
