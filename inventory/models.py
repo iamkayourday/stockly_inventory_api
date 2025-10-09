@@ -1,7 +1,6 @@
 import shortuuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 # CUSTOM USER MODEL
@@ -16,7 +15,6 @@ class CustomUser(AbstractUser):
     )
 
     email = models.EmailField(unique=True)
-    phone_number = PhoneNumberField(unique=True, blank=True, null=True)  
     middle_name = models.CharField(max_length=30, blank=True) 
 
     USERNAME_FIELD = 'email'
@@ -33,6 +31,7 @@ class CustomUser(AbstractUser):
 # PROFILE MODEL LINKED CUSTOMUSER MODEL
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     company_name = models.CharField(max_length=200, blank=True)
     address = models.TextField(blank=True)
     website = models.URLField(blank=True)
@@ -80,7 +79,7 @@ class Supplier(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='suppliers', null=True)
     contact_person = models.CharField(max_length=100, blank=True)
     email = models.EmailField(blank=True, unique=True)
-    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
