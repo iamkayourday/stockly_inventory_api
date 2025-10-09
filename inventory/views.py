@@ -88,6 +88,9 @@ class CategoryListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'created_at', 'updated_at']
 
+    # def get_queryset(self):
+    #     return Category.objects.filter(user=self.request.user).order_by('-updated_at')
+
 # Create Category
 class CategoryCreateView(CreateAPIView):
     queryset = Category.objects.all()
@@ -178,18 +181,16 @@ class UserInventoryListView(ListAPIView):
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        return InventoryItem.objects.filter(user=self.request.user)
-    
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        
+        queryset = InventoryItem.objects.filter(user=self.request.user)
+
         # Low stock filter
         low_stock = self.request.query_params.get('low_stock', None)
         if low_stock is not None:
             if low_stock.lower() in ['true', '1', 'yes']:
                 queryset = queryset.filter(quantity__lte=F('low_stock_threshold'))
-        
+
         return queryset
+
 
 # Inventory Change views will go here to Add, List, Update, Retrieve, Delete Inventory Changes
 class InventoryChangeListCreateView(ListCreateAPIView):
@@ -243,7 +244,7 @@ class UserSupplierListView(ListAPIView):
     search_fields = ['name', 'contact_person', 'email', 'phone_number']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['-updated_at']
-    # pagination_class = PageNumberPagination
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
