@@ -43,6 +43,10 @@ class ProfileUpdateView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.profile
+    
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
 
 
 class PasswordChangeView(UpdateAPIView):
