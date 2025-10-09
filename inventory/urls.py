@@ -7,8 +7,8 @@ from .views import (CategoryCreateView, CategoryDeleteView, CategoryDetailView,
                     InventoryChangeDetailView, InventoryChangeListCreateView,
                     InventoryCreateView, InventoryDeleteView,
                     InventoryDetailView, InventoryItemListView,
-                    InventoryUpdateView, PasswordChangeView, ProfileUpdateView,
-                    UserInventoryListView, UserListView, UserInfoView, UserRegistrationView)
+                    InventoryUpdateView, NotificationListView, PasswordChangeView, ProfileUpdateView, UserSupplierListView, SupplierCreateView, SupplierDeleteView, SupplierDetailView, SupplierUpdateView,
+                    UserInventoryListView, InventoryReportView, UserListView, UserInfoView, UserRegistrationView)
 
 urlpatterns = [
     # AUTHENTICATION
@@ -36,8 +36,18 @@ urlpatterns = [
     path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_item_delete'),
     path('inventory/user/', UserInventoryListView.as_view(), name='user_inventory_list'),
 
+    # SUPPLIERS
+    path('supplier/create/', SupplierCreateView.as_view(), name='supplier_create'),
+    # path('supplier/<int:pk>/', SupplierDetailView.as_view(), name='supplier_detail'),
+    path('supplier/<int:pk>/update/', SupplierUpdateView.as_view(), name='supplier_update'),
+    path('supplier/<int:pk>/delete/', SupplierDeleteView.as_view(), name='supplier_delete'),
+    path('suppliers/', UserSupplierListView.as_view(), name='user_supplier_list'),  
+
     # INVENTORY CHANGE
     path('inventory-changes/', InventoryChangeListCreateView.as_view(), name='inventory_changes_list'),
     path('inventory-changes/<str:pk>/', InventoryChangeDetailView.as_view(), name='inventory_change_detail'),
 
+    # NOTIFICATIONS
+    path('notifications/', NotificationListView.as_view(), name='notification_list'),
+    path('inventory-report/', InventoryReportView.as_view(), name='inventory_report')
 ]

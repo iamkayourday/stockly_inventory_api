@@ -9,10 +9,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Category, CustomUser, InventoryChange, InventoryItem, Supplier
+from .models import Category, CustomUser, InventoryChange, InventoryItem, Notification, Supplier
 from .serializers import (CategorySerializer, InventoryChangeSerializer,
-                          InventoryItemSerializer, PasswordChangeSerializer, ProfileSerializer,
+                          InventoryItemSerializer, NotificationSerializer, PasswordChangeSerializer, ProfileSerializer,
                           UserListSerializer, UserRegistrationSerializer, SupplierSerializer)
 
 
@@ -200,6 +201,7 @@ class InventoryChangeListCreateView(ListCreateAPIView):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+        
     
 class InventoryChangeDetailView(RetrieveAPIView):
     serializer_class = InventoryChangeSerializer
@@ -269,3 +271,50 @@ class SupplierDeleteView(DestroyAPIView):
 
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
+
+class NotificationListView(ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+    
+class InventoryReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        items = InventoryItem.objects.filter(user=user)
+        changes = InventoryChange.objects.filter(user=user).order_by('-change_date')
+
+        total_value = sum(item.quantity * item.price for item in items)
+        low_stock = items.filter(quantity__lte=F('low_stock_threshold'))
+
+        report = {
+            "total_inventory_value": total_value,
+            "total_items_in_stock": items.count(),
+            "low_stock_items": [item.name for item in low_stock],
+            "stock_levels": [
+                {
+                    "name": item.name,
+                    "category": item.category.name,
+                    "quantity": item.quantity,
+                    "unit_price": item.price,
+                    "total_value": item.quantity * item.price
+                } for item in items
+            ],
+            "change_history": [
+                {
+                    "date": change.change_date,
+                    "item": change.item.name,
+                    "type": change.change_type,
+                    "quantity": change.quantity_change,
+                    "from": change.previous_quantity,
+                    "to": change.new_quantity,
+                    "reason": change.reason
+                } for change in changes
+            ]
+        }
+
+        return Response(report)

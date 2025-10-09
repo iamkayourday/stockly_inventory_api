@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import (Category, CustomUser, InventoryChange, InventoryItem,
+from .models import (Category, CustomUser, InventoryChange, InventoryItem, Notification,
                      Profile, Supplier)
 
 
@@ -176,3 +176,7 @@ class SupplierSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Name must be at least 3 characters long.")
         return value
     
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'message', 'is_read', 'created_at']

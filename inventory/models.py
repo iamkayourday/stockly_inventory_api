@@ -131,7 +131,16 @@ class InventoryItem(models.Model):
         if self.price is not None and self.quantity is not None:
             return self.quantity * self.price
         return 0 
-    
+
+class Notification(models.Model):
+    id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications', null=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.email} - {'Read' if self.is_read else 'Unread'}"   
 
 #  Inventory Change Model
 class InventoryChange(models.Model):
@@ -173,9 +182,30 @@ class InventoryChange(models.Model):
                 self.previous_quantity = 0
                 self.new_quantity = self.item.quantity
 
+            if self.change_type == 'SALE':
+                msg = f"Sale recorded: {self.item.name} — {self.quantity_change} unit(s) sold. Updated stock level: {self.new_quantity}."
+            elif self.change_type == 'RESTOCK':
+                msg = f"Restock completed: {self.quantity_change} unit(s) of {self.item.name} added to inventory. Current stock: {self.new_quantity}."
+            elif self.change_type == 'RETURN':
+                msg = f"Return processed: {self.quantity_change} unit(s) of {self.item.name} returned to inventory. New stock level: {self.new_quantity}."
+            elif self.change_type == 'DAMAGE':
+                msg = f"Damage reported: {self.quantity_change} unit(s) of {self.item.name} marked as damaged. Remaining stock: {self.new_quantity}."
+
+            Notification.objects.create(user=self.user, message=msg)
+
+            if self.new_quantity <= self.item.low_stock_threshold:
+                Notification.objects.create(
+                    user=self.user,
+                    message=f"Low stock warning: {self.item.name} has reached a critical level — only {self.new_quantity} unit(s) remaining."
+                )
+                Notification.objects.create(
+                    user=self.user,
+                    message=f"Low stock alert: {self.item.name} has only {self.new_quantity} units left."
+                )
+
         super().save(*args, **kwargs)
 
 
     class Meta:
         ordering = ['-change_date']
-        
+
