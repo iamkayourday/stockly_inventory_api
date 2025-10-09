@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import (Category, CustomUser, InventoryChange, InventoryItem,
+from .models import (Category, CustomUser, InventoryChange, InventoryItem, Notification,
                      Profile, Supplier)
 
 
@@ -62,9 +62,18 @@ class SupplierAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'contact_person', 'email', 'phone_number', 'city', 'state', 'country', 'created_at', 'updated_at']
     search_fields = ['name', 'contact_person', 'email', 'phone_number']
     list_filter = ['city', 'state', 'country', 'created_at']
+
+class NotificationAdmin(admin.ModelAdmin):
+    model = Notification
+    list_display = ['id', 'user', 'message', 'is_read', 'created_at']
+    search_fields = ['user__username', 'message']
+    list_filter = ['is_read', 'created_at']
+
+  
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(InventoryItem, InventoryItemAdmin)
 admin.site.register(InventoryChange, InventoryChangeAdmin)
 admin.site.register(Supplier, SupplierAdmin)
+admin.site.register(Notification, NotificationAdmin)
