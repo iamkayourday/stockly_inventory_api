@@ -107,11 +107,13 @@ class InventoryItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 # STRETCH GOALS
-    barcode = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    barcode = models.CharField(max_length=100, blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, blank=True, null=True, related_name='supplied_items')
 
-
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'barcode'], name='unique_barcode_per_user')
+        ]
         ordering = ['-updated_at']
 
     def __str__(self):
