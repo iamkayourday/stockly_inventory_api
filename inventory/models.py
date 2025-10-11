@@ -134,6 +134,7 @@ class InventoryItem(models.Model):
             return self.quantity * self.price
         return 0 
 
+# INSTEAD OF EMAIL NOTIFICATION, I WILL CREATE A NOTIFICATION MODEL
 class Notification(models.Model):
     id = models.CharField(primary_key=True, default=generate_shortuuid, max_length=22, editable=False, unique=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications', null=True)
@@ -144,7 +145,7 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notification for {self.user.email} - {'Read' if self.is_read else 'Unread'}"   
 
-#  Inventory Change Model
+#  INVENTORY CHANGE LOG MODEL
 class InventoryChange(models.Model):
     CHANGE_TYPE = [
         ('RESTOCK', 'Restock'),
