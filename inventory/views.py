@@ -195,6 +195,11 @@ class UserInventoryListView(ListAPIView):
 class InventoryChangeListCreateView(ListCreateAPIView):
     serializer_class = InventoryChangeSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['change_type', 'change_date', 'item__name', 'user__username']
+    search_fields = ['item__name', 'reason', 'user__username']
+    ordering_fields = ['change_date', 'change_type', 'quantity_change']
+    pagination_class = PageNumberPagination
     
     def get_queryset(self):
         return InventoryChange.objects.filter(item__user=self.request.user).select_related('item', 'user')
