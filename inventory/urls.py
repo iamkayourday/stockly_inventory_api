@@ -24,23 +24,23 @@ urlpatterns = [
     # CATEGORIES
     path('categories/', CategoryListView.as_view(), name='category_list'),
     path('category/create/', CategoryCreateView.as_view(), name='category_create'),
-    path('category/<int:pk>/', CategoryDetailView.as_view(), name='category_detail'),
-    path('category/<int:pk>/update/', CategoryUpdateView.as_view(), name='category_update'),
-    path('category/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
+    path('category/<str:pk>/', CategoryDetailView.as_view(), name='category_detail'),
+    path('category/<str:pk>/update/', CategoryUpdateView.as_view(), name='category_update'),
+    path('category/<str:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
 
     # INVENTORY ITEMS
     path('inventories/', InventoryItemListView.as_view(), name='inventory_item_list'),
     path('inventory/create/', InventoryCreateView.as_view(), name='inventory_item_create'),
-    path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='inventory_item_detail'),
-    # path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_item_update'),
-    path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_item_delete'),
+    path('inventory/<str:pk>/', InventoryDetailView.as_view(), name='inventory_item_detail'),
+    # path('inventory/<str:pk>/update/', InventoryUpdateView.as_view(), name='inventory_item_update'),
+    path('inventory/<str:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_item_delete'),
     path('inventory/user/', UserInventoryListView.as_view(), name='user_inventory_list'),
 
     # SUPPLIERS
     path('supplier/create/', SupplierCreateView.as_view(), name='supplier_create'),
-    # path('supplier/<int:pk>/', SupplierDetailView.as_view(), name='supplier_detail'),
-    path('supplier/<int:pk>/update/', SupplierUpdateView.as_view(), name='supplier_update'),
-    path('supplier/<int:pk>/delete/', SupplierDeleteView.as_view(), name='supplier_delete'),
+    # path('supplier/<str:pk>/', SupplierDetailView.as_view(), name='supplier_detail'),
+    path('supplier/<str:pk>/update/', SupplierUpdateView.as_view(), name='supplier_update'),
+    path('supplier/<str:pk>/delete/', SupplierDeleteView.as_view(), name='supplier_delete'),
     path('suppliers/', UserSupplierListView.as_view(), name='user_supplier_list'),  
 
     # INVENTORY CHANGE
