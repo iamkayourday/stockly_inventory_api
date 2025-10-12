@@ -87,7 +87,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # 6. Inventory Item Serializer
 class InventoryItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     user = serializers.ReadOnlyField(source='user.username')
     is_low_stock = serializers.ReadOnlyField()
     total_value = serializers.ReadOnlyField()
@@ -95,7 +95,7 @@ class InventoryItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryItem
         fields = '__all__'
-        read_only_fields = ('id', 'created_at', 'updated_at', 'quantity', 'is_low_stock', 'total_value')
+        read_only_fields = ('id', 'created_at', 'updated_at', 'is_low_stock', 'total_value')
 
     def validate_name(self, value):
         if not value:
@@ -120,6 +120,22 @@ class InventoryItemSerializer(serializers.ModelSerializer):
             if attrs['quantity'] < attrs['low_stock_threshold']:
                 raise serializers.ValidationError("Quantity cannot be less than low stock threshold.")
         return attrs
+
+
+class InventoryItemUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InventoryItem
+        fields = ['name','price', 'description', 'low_stock_threshold', 'category', 'supplier']  
+
+    def validate_price(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Price cannot be negative.")
+        return value
+
+    def validate_low_stock_threshold(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Low stock threshold cannot be negative.")
+        return value
     
 
 # 7. Inventory Change Serializer
