@@ -2,20 +2,13 @@ import shortuuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# FUNCTION TO GENERATE SHORTUUID
 def generate_shortuuid():
     return shortuuid.uuid()
 
 # CUSTOM USER MODEL
 class CustomUser(AbstractUser):
-    id = models.CharField(
-        primary_key=True,
-        max_length=22,
-        default=generate_shortuuid,
-        editable=False,
-        unique=True,
-        db_index=True
-    )
-
+    id = models.CharField(primary_key=True, max_length=22, default=generate_shortuuid, editable=False, unique=True, db_index=True)
     email = models.EmailField(unique=True)
     middle_name = models.CharField(max_length=30, blank=True) 
 
@@ -124,10 +117,12 @@ class InventoryItem(models.Model):
     def is_low_stock(self):
         return self.quantity <= self.low_stock_threshold
     
+    # Properties to get total products and total value for dashboard
     @property
     def total_products(self):
         return self.inventory_items.count()
 
+    # Total value of inventory
     @property
     def total_value(self):
         if self.price is not None and self.quantity is not None:
@@ -144,6 +139,7 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.email} - {'Read' if self.is_read else 'Unread'}"   
+
 
 #  INVENTORY CHANGE LOG MODEL
 class InventoryChange(models.Model):
