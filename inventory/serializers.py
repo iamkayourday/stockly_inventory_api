@@ -121,7 +121,7 @@ class InventoryItemSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Quantity cannot be less than low stock threshold.")
         return attrs
 
-
+# 7. Inventory Item Update Serializer
 class InventoryItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryItem
@@ -138,7 +138,7 @@ class InventoryItemUpdateSerializer(serializers.ModelSerializer):
         return value
     
 
-# 7. Inventory Change Serializer
+# 8. Inventory Change Serializer
 class InventoryChangeSerializer(serializers.ModelSerializer):
     item_name = serializers.ReadOnlyField(source='item.name')
     user_name = serializers.ReadOnlyField(source='user.username')
@@ -179,7 +179,8 @@ class InventoryChangeSerializer(serializers.ModelSerializer):
                 )
         
         return attrs
-    
+
+# 9. Supplier Serializer 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier

@@ -17,20 +17,21 @@ from .serializers import (CategorySerializer, InventoryChangeSerializer,
                           UserListSerializer, UserRegistrationSerializer, SupplierSerializer)
 
 
-# This view handles user registration
+#1. USER MODELS VIEWS
+
+#1.1 This view allows new user registration
 class UserRegistrationView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
 
-
-# This view lists all users, accessible only by admin users
+#1.2 This view lists all users, accessible only by admin users
 class UserListView(ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [IsAdminUser]
 
-# This view allows users to retrieve and update their own information
+#1.3 This view allows users to retrieve and update their own information
 class UserInfoView(RetrieveUpdateAPIView):
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
@@ -38,7 +39,7 @@ class UserInfoView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-# Profile views to Retrieve and Update Profile
+#1.4 Profile views to Retrieve and Update Profile
 class ProfileUpdateView(RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -49,7 +50,7 @@ class ProfileUpdateView(RetrieveUpdateAPIView):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-# Password Change View
+#1.5 Password Change View
 class PasswordChangeView(UpdateAPIView):
     serializer_class = PasswordChangeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -72,15 +73,15 @@ class PasswordChangeView(UpdateAPIView):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
         
-        # Keep user logged in after password change
+        # Keeps user logged in after password change
         update_session_auth_hash(request, user)
         
         return Response({"message": "Password updated successfully."})
 
 
-# Category views will go here to Add, List, Update, Retrieve, Delete Categories
+#2. CATEGORY MODEL VIEWS(create, Update and Delete by admin only)
 
-# List Categories
+#2.1 List Categories
 class CategoryListView(ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -88,33 +89,34 @@ class CategoryListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'created_at', 'updated_at']
 
-# Create Category
+#2.2 Create Category
 class CategoryCreateView(CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
 
-# Retrieve Category
+#2.3 Retrieve Category
 class CategoryDetailView(RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 
-# Update Category
+#2.4 Update Category
 class CategoryUpdateView(UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
 
-# Delete Category
+#2.5 Delete Category
 class CategoryDeleteView(DestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
 
 
-# Inventory Item views will go here to Add, List, Update, Retrieve, Delete Inventory Items
-# List inventory Items
+#3. INVENTORY ITEM VIEWS
+
+#3.1 List inventory Items(Admin users see all items, regular users see their own items only)
 class InventoryItemListView(ListAPIView):
     queryset = InventoryItem.objects.all()
     serializer_class = InventoryItemSerializer
@@ -137,7 +139,7 @@ class InventoryItemListView(ListAPIView):
         
         return queryset
 
-# Create inventory Item
+#3.2 Create inventory Item
 class InventoryCreateView(CreateAPIView):
     queryset = InventoryItem.objects.all()
     serializer_class = InventoryItemSerializer
@@ -146,7 +148,7 @@ class InventoryCreateView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# Retrieve inventory Item
+#3.3 Retrieve inventory Item
 class InventoryDetailView(RetrieveAPIView):
     serializer_class = InventoryItemSerializer
     permission_classes = [IsAuthenticated]
@@ -154,7 +156,7 @@ class InventoryDetailView(RetrieveAPIView):
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
 
-# Update inventory Item
+#3.4 Update inventory Item
 class InventoryUpdateView(UpdateAPIView):
     serializer_class = InventoryItemUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -162,7 +164,7 @@ class InventoryUpdateView(UpdateAPIView):
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
 
-# Delete inventory Item
+#3.5 Delete inventory Item
 class InventoryDeleteView(DestroyAPIView):
     serializer_class = InventoryItemSerializer
     permission_classes = [IsAuthenticated]
@@ -170,7 +172,7 @@ class InventoryDeleteView(DestroyAPIView):
     def get_queryset(self):
         return InventoryItem.objects.filter(user=self.request.user)
     
-# User Inventory List View
+#3.6 User Inventory List View
 class UserInventoryListView(ListAPIView):
     serializer_class = InventoryItemSerializer
     permission_classes = [IsAuthenticated]
@@ -191,7 +193,9 @@ class UserInventoryListView(ListAPIView):
         return queryset
 
 
-# Inventory Change views will go here to Add, List, Update, Retrieve, Delete Inventory Changes
+#4. INVENTORY CHANGE VIEWS
+
+#4.1 List and Create Inventory Changes
 class InventoryChangeListCreateView(ListCreateAPIView):
     serializer_class = InventoryChangeSerializer
     permission_classes = [IsAuthenticated]
@@ -207,14 +211,16 @@ class InventoryChangeListCreateView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
         
-
+#4.2 Retrieve Inventory Change Details
 class InventoryChangeDetailView(RetrieveAPIView):
     serializer_class = InventoryChangeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return InventoryChange.objects.filter(item__user=self.request.user)
-    
+
+# Update and Delete Inventory Change (if needed, usually changes are not updated or deleted)
+# I don't recommend allowing updates or deletions of inventory changes for audit purposes
 # class InventoryChangeUpdateView(UpdateAPIView):
 #     serializer_class = InventoryChangeSerializer
 #     permission_classes = [IsAuthenticated]
@@ -230,8 +236,9 @@ class InventoryChangeDetailView(RetrieveAPIView):
 #         return InventoryChange.objects.filter(item__user=self.request.user)
     
 
-# Supplier views will go here to Add, List, Update, Retrieve, Delete Suppliers
-# 
+#5. SUPPLIER VIEWS
+
+#5.1 Create Supplier
 class SupplierCreateView(CreateAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
@@ -240,7 +247,7 @@ class SupplierCreateView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# List Suppliers for the authenticated user
+#5.2 List Suppliers
 class UserSupplierListView(ListAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
@@ -255,7 +262,7 @@ class UserSupplierListView(ListAPIView):
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
 
-# Retrieve Supplier Details
+#5.3 Retrieve Supplier Details
 class SupplierDetailView(RetrieveAPIView):
     serializer_class = SupplierSerializer
     permission_classes = [IsAuthenticated]
@@ -263,7 +270,7 @@ class SupplierDetailView(RetrieveAPIView):
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
 
-# Update Supplier Details
+#5.4 Update Supplier Details
 class SupplierUpdateView(UpdateAPIView):
     serializer_class = SupplierSerializer
     permission_classes = [IsAuthenticated]
@@ -271,7 +278,7 @@ class SupplierUpdateView(UpdateAPIView):
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
 
-# Delete Supplier
+#5.5 Delete Supplier
 class SupplierDeleteView(DestroyAPIView):
     serializer_class = SupplierSerializer
     permission_classes = [IsAuthenticated]
@@ -279,7 +286,10 @@ class SupplierDeleteView(DestroyAPIView):
     def get_queryset(self):
         return Supplier.objects.filter(user=self.request.user)
 
-# Notification List View
+
+#6. NOTIFICATION VIEWS
+
+#6.1 Notification List View
 class NotificationListView(ListAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
@@ -288,6 +298,7 @@ class NotificationListView(ListAPIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
 
+#6.2 Notification Update View (e.g., mark as read)
 class NotificationUpdateView(UpdateAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
@@ -295,7 +306,7 @@ class NotificationUpdateView(UpdateAPIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
 
-# Notification Delete View
+#6.3 Notification Delete View
 class NotificationDeleteView(DestroyAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
@@ -303,7 +314,8 @@ class NotificationDeleteView(DestroyAPIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
 
-# Inventory Report View
+
+#7. INVENTORY REPORT VIEW
 class InventoryReportView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -27,7 +27,7 @@ urlpatterns = [
     path('category/<str:pk>/update/', CategoryUpdateView.as_view(), name='category_update'),
     path('category/<str:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
 
-    # INVENTORY ITEMS - FIXED ORDER
+    # INVENTORY ITEMS
     path('inventory/user/', UserInventoryListView.as_view(), name='user_inventory_list'),
     path('inventory/create/', InventoryCreateView.as_view(), name='inventory_item_create'),
     path('inventories/', InventoryItemListView.as_view(), name='inventory_item_list'),
@@ -35,20 +35,20 @@ urlpatterns = [
     path('inventory/<str:pk>/update/', InventoryUpdateView.as_view(), name='inventory_item_update'),  
     path('inventory/<str:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_item_delete'),
 
-    # SUPPLIERS - FIXED ORDER
+    # SUPPLIERS
     path('suppliers/', UserSupplierListView.as_view(), name='user_supplier_list'),
     path('supplier/create/', SupplierCreateView.as_view(), name='supplier_create'),
-    path('supplier/<str:pk>/', SupplierDetailView.as_view(), name='supplier_detail'),  # UNCOMMENTED
+    path('supplier/<str:pk>/', SupplierDetailView.as_view(), name='supplier_detail'), 
     path('supplier/<str:pk>/update/', SupplierUpdateView.as_view(), name='supplier_update'),
     path('supplier/<str:pk>/delete/', SupplierDeleteView.as_view(), name='supplier_delete'),
 
-    # INVENTORY CHANGE
+    # INVENTORY CHANGE(HISTORY- Create, Read only)
     path('inventory-changes/', InventoryChangeListCreateView.as_view(), name='inventory_changes_list'),
     path('inventory-changes/<str:pk>/', InventoryChangeDetailView.as_view(), name='inventory_change_detail'),
 
     # NOTIFICATIONS
     path('notifications/', NotificationListView.as_view(), name='notification_list'),
-    path('notifications/<str:pk>/', NotificationUpdateView.as_view(), name='notification_update'),  # For PATCH
-    path('notifications/<str:pk>/delete/', NotificationDeleteView.as_view(), name='notification_delete'),  # For DELETE
+    path('notifications/<str:pk>/', NotificationUpdateView.as_view(), name='notification_update'), 
+    path('notifications/<str:pk>/delete/', NotificationDeleteView.as_view(), name='notification_delete'),  
     path('inventory-report/', InventoryReportView.as_view(), name='inventory_report')
 ]
