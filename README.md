@@ -1,7 +1,3 @@
-### STOCKLY INVENTORY API
-
-
-
 # 🏷️ Stockly - Inventory Management API
 
 ![Django](https://img.shields.io/badge/Django-5.2.6-green)
@@ -70,10 +66,10 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| POST | `/api/register/` | User registration | Public |
-| POST | `/api/login/` | JWT token obtainment | Public |
-| POST | `/api/token/refresh/` | Token refresh | Authenticated |
-| POST | `/api/change-password/` | Password change | Authenticated |
+| POST | `/api/v1/register/` | User registration | Public |
+| POST | `/api/v1/login/` | JWT token obtainment | Public |
+| POST | `/api/v1/token/refresh/` | Token refresh | Authenticated |
+| POST | `/api/v1/change-password/` | Password change | Authenticated |
 
 ---
 
@@ -81,9 +77,9 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/users/` | List all users | Admin Only |
-| GET | `/api/profile/` | User profile | Authenticated |
-| PATCH | `/api/profile/update/` | Update profile | Authenticated |
+| GET | `/api/v1/users/` | List all users | Admin Only |
+| GET | `/api/v1/profile/` | User profile | Authenticated |
+| PATCH | `/api/v1/profile/update/` | Update profile | Authenticated |
 
 ---
 
@@ -91,11 +87,11 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/inventory/user/` | User's inventory items | Authenticated |
-| POST | `/api/inventory/create/` | Create inventory item | Authenticated |
-| GET | `/api/inventory/<id>/` | Get inventory item | Authenticated |
-| PUT | `/api/inventory/<id>/update/` | Update inventory item | Owner Only |
-| DELETE | `/api/inventory/<id>/delete/` | Delete inventory item | Owner Only |
+| GET | `/api/v1/inventory/user/` | User's inventory items | Authenticated |
+| POST | `/api/v1/inventory/create/` | Create inventory item | Authenticated |
+| GET | `/api/v1/inventory/<id>/` | Get inventory item | Authenticated |
+| PUT | `/api/v1/inventory/<id>/update/` | Update inventory item | Owner Only |
+| DELETE | `/api/v1/inventory/<id>/delete/` | Delete inventory item | Owner Only |
 
 ---
 
@@ -103,11 +99,11 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/categories/` | List categories | Authenticated |
-| POST | `/api/category/create/` | Create category | Admin Only |
-| GET | `/api/category/<id>/` | Get category | Authenticated |
-| PUT | `/api/category/<id>/update/` | Update category | Admin Only |
-| DELETE | `/api/category/<id>/delete/` | Delete category | Admin Only |
+| GET | `/api/v1/categories/` | List categories | Authenticated |
+| POST | `/api/v1/category/create/` | Create category | Admin Only |
+| GET | `/api/v1/category/<id>/` | Get category | Authenticated |
+| PUT | `/api/v1/category/<id>/update/` | Update category | Admin Only |
+| DELETE | `/api/v1/category/<id>/delete/` | Delete category | Admin Only |
 
 ---
 
@@ -115,11 +111,11 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/suppliers/` | List user's suppliers | Authenticated |
-| POST | `/api/supplier/create/` | Create supplier | Authenticated |
-| GET | `/api/supplier/<id>/` | Get supplier | Authenticated |
-| PUT | `/api/supplier/<id>/update/` | Update supplier | Owner Only |
-| DELETE | `/api/supplier/<id>/delete/` | Delete supplier | Owner Only |
+| GET | `/api/v1/suppliers/` | List user's suppliers | Authenticated |
+| POST | `/api/v1/supplier/create/` | Create supplier | Authenticated |
+| GET | `/api/v1/supplier/<id>/` | Get supplier | Authenticated |
+| PUT | `/api/v1/supplier/<id>/update/` | Update supplier | Owner Only |
+| DELETE | `/api/v1/supplier/<id>/delete/` | Delete supplier | Owner Only |
 
 ---
 
@@ -127,9 +123,9 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/inventory-changes/` | List inventory changes | Authenticated |
-| POST | `/api/inventory-changes/` | Create inventory change | Authenticated |
-| GET | `/api/inventory-changes/<id>/` | Get change details | Authenticated |
+| GET | `/api/v1/inventory-changes/` | List inventory changes | Authenticated |
+| POST | `/api/v1/inventory-changes/` | Create inventory change | Authenticated |
+| GET | `/api/v1/inventory-changes/<id>/` | Get change details | Authenticated |
 
 ---
 
@@ -137,9 +133,9 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/notifications/` | List notifications | Authenticated |
-| PUT | `/api/notifications/<id>/` | Update notification | Owner Only |
-| DELETE | `/api/notifications/<id>/delete/` | Delete notification | Owner Only |
+| GET | `/api/v1/notifications/` | List notifications | Authenticated |
+| PUT | `/api/v1/notifications/<id>/` | Update notification | Owner Only |
+| DELETE | `/api/v1/notifications/<id>/delete/` | Delete notification | Owner Only |
 
 ---
 
@@ -147,7 +143,7 @@
 
 | Method | Endpoint | Description | Access |
 |--------|-----------|-------------|---------|
-| GET | `/api/inventory-report/` | Inventory analytics | Authenticated |
+| GET | `/api/v1/inventory-report/` | Inventory analytics | Authenticated |
 
 ---
 
