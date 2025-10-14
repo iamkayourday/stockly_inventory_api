@@ -93,7 +93,7 @@ class CategoryListView(ListAPIView):
 class CategoryCreateView(CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 #2.3 Retrieve Category
 class CategoryDetailView(RetrieveAPIView):
@@ -105,13 +105,13 @@ class CategoryDetailView(RetrieveAPIView):
 class CategoryUpdateView(UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 #2.5 Delete Category
 class CategoryDeleteView(DestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 
 #3. INVENTORY ITEM VIEWS
